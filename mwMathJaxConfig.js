@@ -161,5 +161,6 @@ MathJax.Hub.Config({
                    }
                    });
 
-MathJax.Ajax.loadComplete("_SUBSTITUTE YOUR URL___/mathjax/config/local/mwMathJaxConfig.js");
+//MathJax.Ajax.loadComplete("_SUBSTITUTE YOUR URL___/mathjax/config/local/mwMathJaxConfig.js");
+MathJax.Ajax.loadComplete("https://localhost/mediawiki/mathjax/config/local/mwMathJaxConfig.js");
 //]]>
