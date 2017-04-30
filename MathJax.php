@@ -3,6 +3,7 @@ if(!defined('MEDIAWIKI'))
 die('This is a mediawiki extensions and can\'t be run from the command line.');
 
 $wgHooks['ParserFirstCallInit'][] = 'MathJax_Parser::RunMathJax';
+$wgExtensionMessagesFiles['MathJaxMagic'] = __DIR__ . '/MathJax.i18n.magic.php';
 
 class MathJax_Parser {
      
@@ -12,6 +13,8 @@ class MathJax_Parser {
 
     static function RunMathJax(Parser $parser)
     {
+        # Setting the hook for <nomathjax> tag
+        # c.f. https://www.mediawiki.org/wiki/Manual:Parser.php#Set
         $parser->setHook( 'nomathjax' , 'MathJax_Parser::NoMathJax' );
 
         global $wgHooks;
@@ -24,7 +27,7 @@ class MathJax_Parser {
         return true;
     }
 
-    static function RemoveMathTags(&$parser, &$text) 
+    static function RemoveMathTags($parser, &$text) 
     {
         $text = preg_replace('|:\s*<math>(.*?)</math>|s', '\\[$1\\]', $text);
         $text = preg_replace('|<math>(.*?)</math>|s',     '\\($1\\)', $text);
@@ -50,7 +53,7 @@ class MathJax_Parser {
     }
 
 
-    static function ReplaceByMarkers(Parser &$parser, &$text ) 
+    static function ReplaceByMarkers(Parser $parser, &$text ) 
     {
         $text = preg_replace_callback('/(\$\$)(.*?)(\$\$)/s',                         'MathJax_Parser::Marker',$text);
         $text = preg_replace_callback('|(?<![\{\/\:\\\\])(\$)(.*?)(?<![\\\\])(\$)|s', 'MathJax_Parser::Marker', $text);
@@ -68,14 +71,18 @@ class MathJax_Parser {
         return '<span class="tex2jax_ignore">' . $output . '</span>';
     }
 
-    static function RemoveMarkers( Parser &$parser, &$text )
+    static function RemoveMarkers( Parser $parser, &$text )
     {
 	/** <!-- array_values seems to return a string with "..." instead of '...' so that double backslashes (\\)
 	 *  becomes a single backslash (\) so that I do need the MarkerVal function since modifying a code
 	 *  in math mode to match these backslashes may cause unexpected behaviors. -->
 	 **/	
 	#$text = preg_replace(array_keys(self::$Markers), array_values(self::$Markers), $text);
-        $text = preg_replace_callback('/' . Parser::MARKER_PREFIX . 'MathJax(?:.*?)' . Parser::MARKER_SUFFIX . '/s', 'MathJax_Parser::MarkerVal', $text);
+
+    $text = preg_replace_callback('/' . Parser::MARKER_PREFIX . 'MathJax(?:.*?)' . Parser::MARKER_SUFFIX . '/s', 'MathJax_Parser::MarkerVal', $text);
+	if (MagicWord::get('MAG_NOMATHJAX')->matchAndRemove($text)) {
+		$text = '<span class="tex2jax_ignore">' . $text . '</span>';
+	}
 
         return true;
     }

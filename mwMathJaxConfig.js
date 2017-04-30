@@ -1,7 +1,7 @@
 //<![CDATA[
 MathJax.Hub.Config({
                    showMathMenu: false,
-                   extensions: ["fp.js"],
+                   //extensions: ["fp.js"],
                    tex2jax: {
                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
@@ -12,7 +12,7 @@ MathJax.Hub.Config({
                    },
                    TeX: {
                    equationNumbers: { autoNumber: "AMS" },
-                   extensions: ["xypic.js"],
+                   //extensions: ["xypic.js"],
                    Macros: {
                    /* Wikipedia compatibility: these macros are used on Wikipedia */
                    empty: '\\emptyset',
