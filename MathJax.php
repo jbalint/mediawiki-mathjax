@@ -13,6 +13,7 @@ class MathJax_Parser {
 
     static function RunMathJax(Parser $parser)
     {
+        # TODO : this doesn't seem to work....
         # Setting the hook for <nomathjax> tag
         # c.f. https://www.mediawiki.org/wiki/Manual:Parser.php#Set
         $parser->setHook( 'nomathjax' , 'MathJax_Parser::NoMathJax' );
@@ -55,11 +56,13 @@ class MathJax_Parser {
 
     static function ReplaceByMarkers(Parser $parser, &$text ) 
     {
-        $text = preg_replace_callback('/(\$\$)(.*?)(\$\$)/s',                         'MathJax_Parser::Marker',$text);
-        $text = preg_replace_callback('|(?<![\{\/\:\\\\])(\$)(.*?)(?<![\\\\])(\$)|s', 'MathJax_Parser::Marker', $text);
-        $text = preg_replace_callback('/(\\\\\[)(.*?)(\\\\\])/s',                     'MathJax_Parser::Marker', $text);
-        $text = preg_replace_callback('/(\\\\\()(.*?)(\\\\\))/s',                     'MathJax_Parser::Marker', $text);
-        $text = preg_replace_callback('/(\\\begin{(?:.*?)})(.*?)(\\\end{(?:.*?)})/s', 'MathJax_Parser::Marker', $text);
+        if (!MagicWord::get('MAG_NOMATHJAX')->matchAndRemove($text)) {
+            $text = preg_replace_callback('/(\$\$)(.*?)(\$\$)/s',                         'MathJax_Parser::Marker',$text);
+            $text = preg_replace_callback('|(?<![\{\/\:\\\\])(\$)(.*?)(?<![\\\\])(\$)|s', 'MathJax_Parser::Marker', $text);
+            $text = preg_replace_callback('/(\\\\\[)(.*?)(\\\\\])/s',                     'MathJax_Parser::Marker', $text);
+            $text = preg_replace_callback('/(\\\\\()(.*?)(\\\\\))/s',                     'MathJax_Parser::Marker', $text);
+            $text = preg_replace_callback('/(\\\begin{(?:.*?)})(.*?)(\\\end{(?:.*?)})/s', 'MathJax_Parser::Marker', $text);
+        }
 
         return true;
     }
@@ -80,9 +83,6 @@ class MathJax_Parser {
 	#$text = preg_replace(array_keys(self::$Markers), array_values(self::$Markers), $text);
 
     $text = preg_replace_callback('/' . Parser::MARKER_PREFIX . 'MathJax(?:.*?)' . Parser::MARKER_SUFFIX . '/s', 'MathJax_Parser::MarkerVal', $text);
-	if (MagicWord::get('MAG_NOMATHJAX')->matchAndRemove($text)) {
-		$text = '<span class="tex2jax_ignore">' . $text . '</span>';
-	}
 
         return true;
     }
