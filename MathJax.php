@@ -42,13 +42,9 @@ class MathJax_Parser {
         global $wgMathJaxProcConf;
         global $wgMathJaxLocConf;
 
-        if(self::$mark_n == 0) return true; // there was no math detected
-
-        $tempScript = "<script type='text/javascript' src='" . $wgMathJaxJS . "?config=" . $wgMathJaxProcConf;
-        if (!is_null($wgMathJaxLocConf)) $tempScript = $tempScript . "," . $wgMathJaxLocConf;
-        $tempScript = $tempScript . "'> </script>";
-
-        $out->addScript( $tempScript );
+        $out->addScript( "<script type='text/javascript' src='" . $wgMathJaxLocConf . "'> </script>" );
+        # Don't need this if we load from CDN
+        #$out->addScript( "<script type='text/javascript' src='" . $wgMathJaxJS . "'> </script>" );
 
         return true;
     }
