@@ -52,7 +52,7 @@ class MathJax_Parser {
 
     static function ReplaceByMarkers(Parser $parser, &$text ) 
     {
-        if (!MagicWord::get('MAG_NOMATHJAX')->matchAndRemove($text)) {
+        if (!$parser->getMagicWordFactory()->get('MAG_NOMATHJAX')->matchAndRemove($text)) {
             $text = preg_replace_callback('/(\$\$)(.*?)(\$\$)/s',                         'MathJax_Parser::Marker',$text);
             $text = preg_replace_callback('|(?<![\{\/\:\\\\])(\$)(.*?)(?<![\\\\])(\$)|s', 'MathJax_Parser::Marker', $text);
             $text = preg_replace_callback('/(\\\\\[)(.*?)(\\\\\])/s',                     'MathJax_Parser::Marker', $text);
